@@ -33,7 +33,7 @@ function initGUI() {
 	gui.addColor(generateParams, 'basePointsColor');
 	gui.addColor(generateParams, 'depthVertexColor');
 	gui.addColor(generateParams, 'faceMeshColor');
-	gui.add(generateParams, "faceMeshOpacity",0,1);
-	gui.add(generateParams, "faceMeshTransparent");
+	//gui.add(generateParams, "faceMeshOpacity",0,1);
+	//gui.add(generateParams, "faceMeshTransparent");
 	gui.add(generateParams, "generate");
 }
