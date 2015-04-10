@@ -5,7 +5,7 @@ var generateParams = {
 		radius = generateParams.radius;
 		initVData();
 		initSphereTemplate();
-		generatePoints(generateParams.depth, radius);
+		generatePoints(Number.parseInt(generateParams.depth), radius);
 		initPointCloud(vdata,0xFFFFFF);
 	}
 }

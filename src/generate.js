@@ -12,7 +12,7 @@ vdata = [
 
 function subdivide(v1, v2, v3, sphere_points, d) {
 	console.log("depth="+d);
-    if(d == 0) {
+    if(d <= 0) {
 		console.log("sphere_points.length="+sphere_points.length);
 		console.log(v1);
 		console.log(v2);
@@ -66,6 +66,7 @@ function initVData() {
 }
 
 function generatePoints(depth, radius) {
+	console.log(depth);
 	var sphere_points = new Array();
 	initialize_sphere(sphere_points, depth); // where DEPTH should be the subdivision depth
 	for (var point in sphere_points) {
