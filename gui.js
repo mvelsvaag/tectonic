@@ -4,6 +4,7 @@ var generateParams = {
 	scale: 1,
 	sphereColor: 0xffffff,
 	sphereOpacity: 0.1,
+	sphereTransparent : true,
 	basePointsColor: 0xFFFFFF,
 	depthVertexColor: 0xFFFF00,
 	faceMeshColor: 0x99CCFF,
@@ -24,10 +25,11 @@ function initGUI() {
 	var gui = new dat.GUI();
 
 	gui.add(generateParams, "depth",0,5).step(1);
-	gui.add(generateParams, "scale",1,100).step(1);
+	gui.add(generateParams, "scale",1,5).step(1);
 	//gui.add(generateParams, "radius",1,10).step(1);;
 	gui.addColor(generateParams, 'sphereColor');
 	gui.add(generateParams, "sphereOpacity",0,1);
+	gui.add(generateParams, "sphereTransparent");
 	gui.addColor(generateParams, 'basePointsColor');
 	gui.addColor(generateParams, 'depthVertexColor');
 	gui.addColor(generateParams, 'faceMeshColor');

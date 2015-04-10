@@ -97,7 +97,7 @@
 		var material = new THREE.MeshLambertMaterial({
 			color: generateParams.sphereColor, 
 			opacity: generateParams.sphereOpacity,
-			transparent: true
+			transparent: generateParams.sphereTransparent
 		});
 		sphere = new THREE.Mesh( geometry, material );
 		sphere.scale.set(nScale,nScale,nScale);
