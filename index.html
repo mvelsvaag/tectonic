@@ -95,8 +95,8 @@
 		}
 		var geometry = new THREE.SphereGeometry( radius, 32, 32 );
 		var material = new THREE.MeshLambertMaterial({
-			color: 0xffffff, 
-			opacity: 0.1,
+			color: generateParams.sphereColor, 
+			opacity: generateParams.sphereOpacity,
 			transparent: true
 		});
 		sphere = new THREE.Mesh( geometry, material );
@@ -113,7 +113,7 @@
 			geometry.vertices.push(vectors[i]);
 		}
 		var pMaterial = new THREE.PointCloudMaterial({
-                    color: 0xFFFFFF,
+                    color: generateParams.basePointsColor,
                     size: 1,
                     sizeAttenuation : false
 		});
@@ -131,7 +131,7 @@
 			geometry.vertices.push(vectors[i]);
 		}
 		var pMaterial = new THREE.PointCloudMaterial({
-                    color: 0xFF0000,
+                    color: generateParams.depthVertexColor,
                     size: 2,
                     sizeAttenuation : false
 		});
@@ -140,23 +140,32 @@
 		scene.add( spherePointCloud );
 	}
 	
-	function initFaces(faces,color) {
+	function initFaces() {
 		if(depthFaces !=null) {
-			scene.remove( depthFaces  );
+			//scene.remove( depthFaces  );
 		}
-		var geometry = new THREE.Geometry();
+		depthFaces = new THREE.Object3D();
+		depthFaces.position.set(0,0,0);
+		var material = new THREE.MeshPhongMaterial({
+			color: generateParams.faceMeshColor,
+			opacity: generateParams.sphereOpacity,
+			transparent: generateParams.faceMeshTransparent
+			
+		});
 		for(i in depthTriangles) {
+			var geometry = new THREE.Geometry();
 			var triangle = depthTriangles[i];
 			var face = new THREE.Face3(0,1,2);
 			geometry.vertices.push(triangle.a);
 			geometry.vertices.push(triangle.b);
 			geometry.vertices.push(triangle.c);
 			geometry.faces.push(face);
+			var mesh = new THREE.Mesh(geometry,material);
+			mesh.scale.set(nScale,nScale,nScale);
+			depthFaces.add( mesh );
 		}
-		var material = new THREE.MeshNormalMaterial();
-		depthFaces = new THREE.Mesh(geometry,material);
-		depthFaces.scale.set(nScale,nScale,nScale);
-		scene.add( depthFaces );
+		scene.add(depthFaces);
+		console.log(depthFaces);
 	}
 	
 	function render() {
