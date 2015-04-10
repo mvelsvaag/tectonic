@@ -5,6 +5,8 @@ var radius = 1;
 var vdata, tindices;
 var depthTriangles;
 
+var duplicateVertexCount;
+
 vdata = [
         new THREE.Vector3(-X*radius, 0.0, Z*radius), new THREE.Vector3( X*radius, 0.0, Z*radius ), new THREE.Vector3( -X*radius, 0.0, -Z*radius ), new THREE.Vector3( X*radius, 0.0, -Z*radius ),
         new THREE.Vector3( 0.0, Z*radius, X*radius ), new THREE.Vector3( 0.0, Z*radius, -X*radius ), new THREE.Vector3( 0.0, -Z*radius, X*radius ), new THREE.Vector3( 0.0, -Z*radius, -X*radius ),
@@ -49,8 +51,7 @@ function pushVector(v,sphere_points) {
 	function checkVector(i) {
 		if(i<sphere_points.length) {
 			if(v.equals(sphere_points[i])) {
-
-				console.log("duplicate vector");
+				duplicateVertexCount++;
 				contains =true;
 			}else {
 				checkVector(i+1);
@@ -93,7 +94,7 @@ function initialize_sphere(sphere_points,depth) {
     ];
 	
     for(var i = 0; i < tindices.length; i++) {
-		console.log("i="+i);
+		//console.log("i="+i);
         subdivide(vdata[tindices[i][0]], vdata[tindices[i][1]], vdata[tindices[i][2]], sphere_points, depth);
 		//console.log("sphere_points.length="+sphere_points.length);
 	}
@@ -110,6 +111,7 @@ function initVData() {
 
 function generatePoints(depth, radius) {
 	var sphere_points = new Array();
+	duplicateVertexCount = 0;
 	depthTriangles = new Array();
 	initialize_sphere(sphere_points, depth); // where DEPTH should be the subdivision depth
 	initSpherePointCloud(sphere_points,0xFF0000);

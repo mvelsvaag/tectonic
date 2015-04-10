@@ -16,7 +16,7 @@ var generateParams = {
 function initGUI() {
 	var gui = new dat.GUI();
 
-	gui.add(generateParams, "depth",0,5);
+	gui.add(generateParams, "depth",0,5).step(1);
 	gui.add(generateParams, "scale",1,100).step(1);
 	gui.add(generateParams, "radius",1,10).step(1);;
 	gui.add(generateParams, "generate");
