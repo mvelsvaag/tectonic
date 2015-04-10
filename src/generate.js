@@ -115,7 +115,7 @@ function generatePoints(depth, radius) {
 	depthTriangles = new Array();
 	initialize_sphere(sphere_points, depth); // where DEPTH should be the subdivision depth
 	initSpherePointCloud(sphere_points,0xFF0000);
-	console.log("sphere_points.length="+sphere_points.length);
+	console.log("vertices="+sphere_points.length);
 }
 
 // Then for the sphere I want to draw, I  iterate over all the precomputed sphere points and with a linear function translate the sphere to its CENTER and chose the proper RADIUS
