@@ -6,6 +6,7 @@ var vdata, tindices;
 var depthTriangles;
 
 var duplicateVertexCount;
+var duplicateTriangeCount;
 
 vdata = [
         new THREE.Vector3(-X*radius, 0.0, Z*radius), new THREE.Vector3( X*radius, 0.0, Z*radius ), new THREE.Vector3( -X*radius, 0.0, -Z*radius ), new THREE.Vector3( X*radius, 0.0, -Z*radius ),
@@ -70,7 +71,7 @@ function pushTriangle(triangle) {
 		if(i<depthTriangles.length) {
 			if(depthTriangles[i]!=null) {
 				if(triangle.equals(depthTriangles[i])) {
-					console.log("duplicate face");
+					duplicateTriangeCount++;
 					contains =true;
 				}
 			}else {
@@ -94,9 +95,7 @@ function initialize_sphere(sphere_points,depth) {
     ];
 	
     for(var i = 0; i < tindices.length; i++) {
-		//console.log("i="+i);
         subdivide(vdata[tindices[i][0]], vdata[tindices[i][1]], vdata[tindices[i][2]], sphere_points, depth);
-		//console.log("sphere_points.length="+sphere_points.length);
 	}
 	
 }
@@ -112,10 +111,11 @@ function initVData() {
 function generatePoints(depth, radius) {
 	var sphere_points = new Array();
 	duplicateVertexCount = 0;
+	duplicateTriangeCount = 0;
 	depthTriangles = new Array();
 	initialize_sphere(sphere_points, depth); // where DEPTH should be the subdivision depth
 	initSpherePointCloud(sphere_points,0xFF0000);
-	console.log("vertices="+sphere_points.length);
+	document.getElementById("vertices").innerHTML = sphere_points.length;
 }
 
 // Then for the sphere I want to draw, I  iterate over all the precomputed sphere points and with a linear function translate the sphere to its CENTER and chose the proper RADIUS

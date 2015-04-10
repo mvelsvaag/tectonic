@@ -165,7 +165,7 @@
 			depthFaces.add( mesh );
 		}
 		scene.add(depthFaces);
-		console.log("faces="+depthFaces.children.length);
+		document.getElementById("faces").innerHTML = depthFaces.children.length;
 	}
 	
 	function render() {
@@ -199,8 +199,10 @@
 <body>
 <div class="info">
 			<a href="http://threejs.org" target="_blank">three.js</a> webgl tectonic model - by <a href="https://twitter.com/rkaganda">rkaganda</a> - <a href="https://github.com/rkaganda/tectonic">github</a>
+			<br><span> vertices=</span><span id="vertices">0</span><span> faces=</span><span id="faces">0</span>
 		</div>
-
+		
+		<div class="info"></div>
 		<div id="container"></div>
 </body>
 </html>
