@@ -38,7 +38,7 @@
 	var scene, camera;
 	var lighting = new Object();
 	
-	var pointCloud, spherePointCloud ;
+	var pointCloud, spherePointCloud,depthFaces;
 	var sphere;
 	var nScale =1;
 	
@@ -113,13 +113,13 @@
 			geometry.vertices.push(vectors[i]);
 		}
 		var pMaterial = new THREE.PointCloudMaterial({
-                    color: 0x00ff00,
+                    color: 0xFFFFFF,
                     size: 1,
                     sizeAttenuation : false
 		});
 		pointCloud = new THREE.PointCloud(geometry,pMaterial);
 		pointCloud.scale.set(nScale,nScale,nScale);
-		//scene.add( pointCloud );
+		scene.add( pointCloud );
 	}
 	
 	function initSpherePointCloud(vectors,color) {
@@ -132,12 +132,31 @@
 		}
 		var pMaterial = new THREE.PointCloudMaterial({
                     color: 0xFF0000,
-                    size: 1,
+                    size: 2,
                     sizeAttenuation : false
 		});
 		spherePointCloud = new THREE.PointCloud(geometry,pMaterial);
 		spherePointCloud.scale.set(nScale,nScale,nScale);
 		scene.add( spherePointCloud );
+	}
+	
+	function initFaces(faces,color) {
+		if(depthFaces !=null) {
+			scene.remove( depthFaces  );
+		}
+		var geometry = new THREE.Geometry();
+		for(i in depthTriangles) {
+			var triangle = depthTriangles[i];
+			var face = new THREE.Face3(0,1,2);
+			geometry.vertices.push(triangle.a);
+			geometry.vertices.push(triangle.b);
+			geometry.vertices.push(triangle.c);
+			geometry.faces.push(face);
+		}
+		var material = new THREE.MeshNormalMaterial();
+		depthFaces = new THREE.Mesh(geometry,material);
+		depthFaces.scale.set(nScale,nScale,nScale);
+		scene.add( depthFaces );
 	}
 	
 	function render() {

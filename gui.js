@@ -9,6 +9,7 @@ var generateParams = {
 		initSphereTemplate();
 		generatePoints(Number.parseInt(generateParams.depth), radius);
 		initPointCloud(vdata,0xFFFFFF);
+		initFaces();
 	}
 }
 

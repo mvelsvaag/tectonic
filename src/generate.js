@@ -3,6 +3,7 @@ var Z = 0.850650808352039932;
 //var sphere_points = new Array();
 var radius = 1;
 var vdata, tindices;
+var depthTriangles;
 
 vdata = [
         new THREE.Vector3(-X*radius, 0.0, Z*radius), new THREE.Vector3( X*radius, 0.0, Z*radius ), new THREE.Vector3( -X*radius, 0.0, -Z*radius ), new THREE.Vector3( X*radius, 0.0, -Z*radius ),
@@ -26,7 +27,11 @@ function subdivide(v1, v2, v3, sphere_points, d) {
 		if(pushVector(v3,sphere_points)) {
 			sphere_points.push(v3);
 		}
-		console.log("done="+sphere_points.length);
+		var triangle = new THREE.Triangle(v1,v2,v3);
+		triangle.set(v1,v2,v3);
+		if(pushTriangle(triangle)) {
+			depthTriangles.push(triangle);
+		}
         return;
     }
 	d = d -1;
@@ -45,7 +50,7 @@ function pushVector(v,sphere_points) {
 		if(i<sphere_points.length) {
 			if(v.equals(sphere_points[i])) {
 
-				console.log("duplicate");
+				console.log("duplicate vector");
 				contains =true;
 			}else {
 				checkVector(i+1);
@@ -58,6 +63,27 @@ function pushVector(v,sphere_points) {
 	}
 }
 
+function pushTriangle(triangle) {
+	var contains = false;
+	function checkFace(i) {
+		if(i<depthTriangles.length) {
+			if(depthTriangles[i]!=null) {
+				if(triangle.equals(depthTriangles[i])) {
+					console.log("duplicate face");
+					contains =true;
+				}
+			}else {
+				checkFace(i+1);
+			}
+		}
+	}
+	checkFace(0);
+	if(!contains) {
+		 return triangle;
+	}
+}
+
+
 function initialize_sphere(sphere_points,depth) {
     tindices = [
 	[0, 4, 1], [0, 9, 4 ],[ 9, 5, 4 ], [ 4, 5, 8 ], [ 4, 8, 1 ],
@@ -66,10 +92,10 @@ function initialize_sphere(sphere_points,depth) {
         [ 6, 1, 10 ], [ 9, 0, 11 ], [ 9, 11, 2 ], [ 9, 2, 5 ], [ 7, 2, 11 ]
     ];
 	
-    for(var i = 0; i < 12; i++) {
+    for(var i = 0; i < tindices.length; i++) {
 		console.log("i="+i);
         subdivide(vdata[tindices[i][0]], vdata[tindices[i][1]], vdata[tindices[i][2]], sphere_points, depth);
-		console.log("sphere_points.length="+sphere_points.length);
+		//console.log("sphere_points.length="+sphere_points.length);
 	}
 	
 }
@@ -84,6 +110,7 @@ function initVData() {
 
 function generatePoints(depth, radius) {
 	var sphere_points = new Array();
+	depthTriangles = new Array();
 	initialize_sphere(sphere_points, depth); // where DEPTH should be the subdivision depth
 	initSpherePointCloud(sphere_points,0xFF0000);
 	console.log("sphere_points.length="+sphere_points.length);
