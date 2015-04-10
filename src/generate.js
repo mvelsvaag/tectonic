@@ -5,31 +5,53 @@ var radius = 1;
 var vdata, tindices;
 var depthTriangles;
 
-var duplicateVertexCount;
-var duplicateTriangeCount;
+//var duplicateVertexCount;
+//var duplicateTriangeCount;
 
 vdata = [
-        new THREE.Vector3(-X*radius, 0.0, Z*radius), new THREE.Vector3( X*radius, 0.0, Z*radius ), new THREE.Vector3( -X*radius, 0.0, -Z*radius ), new THREE.Vector3( X*radius, 0.0, -Z*radius ),
-        new THREE.Vector3( 0.0, Z*radius, X*radius ), new THREE.Vector3( 0.0, Z*radius, -X*radius ), new THREE.Vector3( 0.0, -Z*radius, X*radius ), new THREE.Vector3( 0.0, -Z*radius, -X*radius ),
-        new THREE.Vector3( Z*radius, X*radius, 0.0 ), new THREE.Vector3( -Z*radius, X*radius, 0.0 ), new THREE.Vector3( Z*radius, -X*radius, 0.0 ), new THREE.Vector3( -Z*radius, -X*radius, 0.0 )
+        new THREE.Vector3(-X, 0.0, Z), new THREE.Vector3( X, 0.0, Z ), new THREE.Vector3( -X, 0.0, -Z ), new THREE.Vector3( X, 0.0, -Z ),
+        new THREE.Vector3( 0.0, Z, X ), new THREE.Vector3( 0.0, Z, -X ), new THREE.Vector3( 0.0, -Z, X ), new THREE.Vector3( 0.0, -Z, -X ),
+        new THREE.Vector3( Z, X, 0.0 ), new THREE.Vector3( -Z, X, 0.0 ), new THREE.Vector3( Z, -X, 0.0 ), new THREE.Vector3( -Z, -X, 0.0 )
     ];
 
 function subdivide(v1, v2, v3, sphere_points, d) {
     if(d == 0) {
-		/*
-        sphere_points.push(v1);
-        sphere_points.push(v2);
-        sphere_points.push(v3);
-		*/
-		if(pushVector(v1,sphere_points)) {
+		//add the vector to to sphere_points
+		if(containsVector(v1,sphere_points)) {
 			sphere_points.push(v1);
 		}
-		if(pushVector(v2,sphere_points)) {
+		if(containsVector(v2,sphere_points)) {
 			sphere_points.push(v2);
 		}
-		if(pushVector(v3,sphere_points)) {
+		if(containsVector(v3,sphere_points)) {
 			sphere_points.push(v3);
 		}
+		
+		addAdjectProperty(v1);
+		if(containsVector(v2,v1.adjacent)) {
+			v1.adjacent.push(v2);
+		}
+		
+		if(containsVector(v3,v1.adjacent)) {
+			v1.adjacent.push(v3);
+		}
+		
+		addAdjectProperty(v2);
+		if(containsVector(v1,v2.adjacent)) {
+			v2.adjacent.push(v1);
+		}
+		if(containsVector(v3,v2.adjacent)) {
+			v2.adjacent.push(v3);
+		}
+		
+		addAdjectProperty(v3);
+		if(containsVector(v1,v3.adjacent)) {
+			v3.adjacent.push(v1);
+		}
+		if(containsVector(v2,v3.adjacent)) {
+			v3.adjacent.push(v2);
+		}
+		
 		var triangle = new THREE.Triangle(v1,v2,v3);
 		triangle.set(v1,v2,v3);
 		if(pushTriangle(triangle)) {
@@ -47,12 +69,18 @@ function subdivide(v1, v2, v3, sphere_points, d) {
     subdivide(v12, v23, v31, sphere_points, d);
 }
 
-function pushVector(v,sphere_points) {
+function addAdjectProperty(v) {
+	if(typeof v.adjacent =="undefined") {
+			v.adjacent = new Array();
+	}
+}
+
+function containsVector(v,vectors) {
 	var contains = false;
 	function checkVector(i) {
-		if(i<sphere_points.length) {
-			if(v.equals(sphere_points[i])) {
-				duplicateVertexCount++;
+		if(i<vectors.length) {
+			if(v.equals(vectors[i])) {
+				//duplicateVertexCount++;
 				contains =true;
 			}else {
 				checkVector(i+1);
@@ -71,7 +99,7 @@ function pushTriangle(triangle) {
 		if(i<depthTriangles.length) {
 			if(depthTriangles[i]!=null) {
 				if(triangle.equals(depthTriangles[i])) {
-					duplicateTriangeCount++;
+					//duplicateTriangeCount++;
 					contains =true;
 				}
 			}else {
@@ -102,9 +130,9 @@ function initialize_sphere(sphere_points,depth) {
 
 function initVData() {
 	vdata = [
-        new THREE.Vector3(-X*radius, 0.0, Z*radius), new THREE.Vector3( X*radius, 0.0, Z*radius ), new THREE.Vector3( -X*radius, 0.0, -Z*radius ), new THREE.Vector3( X*radius, 0.0, -Z*radius ),
-        new THREE.Vector3( 0.0, Z*radius, X*radius ), new THREE.Vector3( 0.0, Z*radius, -X*radius ), new THREE.Vector3( 0.0, -Z*radius, X*radius ), new THREE.Vector3( 0.0, -Z*radius, -X*radius ),
-        new THREE.Vector3( Z*radius, X*radius, 0.0 ), new THREE.Vector3( -Z*radius, X*radius, 0.0 ), new THREE.Vector3( Z*radius, -X*radius, 0.0 ), new THREE.Vector3( -Z*radius, -X*radius, 0.0 )
+        new THREE.Vector3(-X, 0.0, Z), new THREE.Vector3( X, 0.0, Z ), new THREE.Vector3( -X, 0.0, -Z ), new THREE.Vector3( X, 0.0, -Z ),
+        new THREE.Vector3( 0.0, Z, X ), new THREE.Vector3( 0.0, Z, -X ), new THREE.Vector3( 0.0, -Z, X ), new THREE.Vector3( 0.0, -Z, -X ),
+        new THREE.Vector3( Z, X, 0.0 ), new THREE.Vector3( -Z, X, 0.0 ), new THREE.Vector3( Z, -X, 0.0 ), new THREE.Vector3( -Z, -X, 0.0 )
     ]
 }
 
@@ -115,6 +143,7 @@ function generatePoints(depth, radius) {
 	depthTriangles = new Array();
 	initialize_sphere(sphere_points, depth); // where DEPTH should be the subdivision depth
 	initSpherePointCloud(sphere_points,0xFF0000);
+	depthVectors = sphere_points;
 	document.getElementById("vertices").innerHTML = sphere_points.length;
 }
 
