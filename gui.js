@@ -30,7 +30,7 @@ function initGUI() {
 	gui.addColor(generateParams, 'sphereColor');
 	gui.add(generateParams, "sphereOpacity",0,1);
 	gui.add(generateParams, "sphereTransparent");
-	gui.addColor(generateParams, 'basePointsColor');
+	//gui.addColor(generateParams, 'basePointsColor');
 	gui.addColor(generateParams, 'depthVertexColor');
 	gui.addColor(generateParams, 'faceMeshColor');
 	//gui.add(generateParams, "faceMeshOpacity",0,1);
