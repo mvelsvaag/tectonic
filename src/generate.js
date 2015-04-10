@@ -1,6 +1,6 @@
 var X = 0.525731112119133606;
 var Z = 0.850650808352039932;
-var sphere_points = new Array();
+//var sphere_points = new Array();
 var radius = 1;
 var vdata, tindices;
 
@@ -11,10 +11,22 @@ vdata = [
     ];
 
 function subdivide(v1, v2, v3, sphere_points, d) {
-    if(d <= 0) {
+    if(d == 0) {
+		/*
         sphere_points.push(v1);
         sphere_points.push(v2);
         sphere_points.push(v3);
+		*/
+		if(pushVector(v1,sphere_points)) {
+			sphere_points.push(v1);
+		}
+		if(pushVector(v2,sphere_points)) {
+			sphere_points.push(v2);
+		}
+		if(pushVector(v3,sphere_points)) {
+			sphere_points.push(v3);
+		}
+		console.log("done="+sphere_points.length);
         return;
     }
 	d = d -1;
@@ -27,6 +39,25 @@ function subdivide(v1, v2, v3, sphere_points, d) {
     subdivide(v12, v23, v31, sphere_points, d);
 }
 
+function pushVector(v,sphere_points) {
+	var contains = false;
+	function checkVector(i) {
+		if(i<sphere_points.length) {
+			if(v.equals(sphere_points[i])) {
+
+				console.log("duplicate");
+				contains =true;
+			}else {
+				checkVector(i+1);
+			}
+		}
+	}
+	checkVector(0);
+	if(!contains) {
+		 return v;
+	}
+}
+
 function initialize_sphere(sphere_points,depth) {
     tindices = [
 	[0, 4, 1], [0, 9, 4 ],[ 9, 5, 4 ], [ 4, 5, 8 ], [ 4, 8, 1 ],
@@ -35,8 +66,10 @@ function initialize_sphere(sphere_points,depth) {
         [ 6, 1, 10 ], [ 9, 0, 11 ], [ 9, 11, 2 ], [ 9, 2, 5 ], [ 7, 2, 11 ]
     ];
 	
-    for(var i = 0; i < tindices.length; i++) {
+    for(var i = 0; i < 12; i++) {
+		console.log("i="+i);
         subdivide(vdata[tindices[i][0]], vdata[tindices[i][1]], vdata[tindices[i][2]], sphere_points, depth);
+		console.log("sphere_points.length="+sphere_points.length);
 	}
 	
 }
@@ -52,9 +85,6 @@ function initVData() {
 function generatePoints(depth, radius) {
 	var sphere_points = new Array();
 	initialize_sphere(sphere_points, depth); // where DEPTH should be the subdivision depth
-	for (var point in sphere_points) {
-		var point_tmp = point * radius;
-	}
 	initSpherePointCloud(sphere_points,0xFF0000);
 	console.log("sphere_points.length="+sphere_points.length);
 }

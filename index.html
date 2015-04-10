@@ -40,6 +40,7 @@
 	
 	var pointCloud, spherePointCloud ;
 	var sphere;
+	var nScale =1;
 	
 	
 	function initScene() {
@@ -99,6 +100,7 @@
 			transparent: true
 		});
 		sphere = new THREE.Mesh( geometry, material );
+		sphere.scale.set(nScale,nScale,nScale);
 		scene.add( sphere );
 	}
 	
@@ -111,16 +113,16 @@
 			geometry.vertices.push(vectors[i]);
 		}
 		var pMaterial = new THREE.PointCloudMaterial({
-                    color: color,
+                    color: 0x00ff00,
                     size: 1,
                     sizeAttenuation : false
 		});
 		pointCloud = new THREE.PointCloud(geometry,pMaterial);
-		scene.add( pointCloud );
+		pointCloud.scale.set(nScale,nScale,nScale);
+		//scene.add( pointCloud );
 	}
 	
 	function initSpherePointCloud(vectors,color) {
-		console.log(vectors.length);
 		if(spherePointCloud !=null) {
 			scene.remove( spherePointCloud  );
 		}
@@ -130,10 +132,11 @@
 		}
 		var pMaterial = new THREE.PointCloudMaterial({
                     color: 0xFF0000,
-                    size: 2,
+                    size: 1,
                     sizeAttenuation : false
 		});
 		spherePointCloud = new THREE.PointCloud(geometry,pMaterial);
+		spherePointCloud.scale.set(nScale,nScale,nScale);
 		scene.add( spherePointCloud );
 	}
 	

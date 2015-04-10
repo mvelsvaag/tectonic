@@ -1,7 +1,9 @@
 var generateParams = {
 	depth: 0,
 	radius: 1,
+	scale: 1,
 	generate: function() {
+		nScale = generateParams.scale;
 		radius = generateParams.radius;
 		initVData();
 		initSphereTemplate();
@@ -13,8 +15,8 @@ var generateParams = {
 function initGUI() {
 	var gui = new dat.GUI();
 
-	
-	gui.add(generateParams, "depth",1,5);
-	gui.add(generateParams, "radius",1,100);
+	gui.add(generateParams, "depth",0,5);
+	gui.add(generateParams, "scale",1,100).step(1);
+	gui.add(generateParams, "radius",1,10).step(1);;
 	gui.add(generateParams, "generate");
 }
