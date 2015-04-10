@@ -38,30 +38,16 @@
 	var scene, camera;
 	var lighting = new Object();
 	
-	var pointCloud;
+	var pointCloud, spherePointCloud ;
 	var sphere;
-	
-	//var clock = new THREE.Clock();
 	
 	
 	function initScene() {
-		camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 1, 1000 );
+		camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 1, 10000 );
 		camera.position.z = 10;
 		
 		controls = new THREE.OrbitControls( camera );
-		/*
-		controls.rotateSpeed = 1.0;
-		controls.zoomSpeed = 1.2;
-		controls.panSpeed = 0.8;
-		controls.noZoom = false;
-		controls.noPan = false;
-		controls.staticMoving = true;
-		controls.dynamicDampingFactor = 0.3;
-		controls.keys = [ 65, 83, 68 ];
-		controls.addEventListener( 'change', render );
-		*/
-		controls = new THREE.OrbitControls( camera );
-		controls.damping = 0.2;
+
 		controls.addEventListener( 'change', render );
 
 		// Setup scene
@@ -125,18 +111,30 @@
 			geometry.vertices.push(vectors[i]);
 		}
 		var pMaterial = new THREE.PointCloudMaterial({
-                    color: 0x00FFFF,
-                    size: 2,
+                    color: color,
+                    size: 1,
                     sizeAttenuation : false
-             });
-		/*
-		var material = new THREE.PointCloudMaterial({
-			color: color,
-			vertexColors: THREE.VertexColors
 		});
-		*/
 		pointCloud = new THREE.PointCloud(geometry,pMaterial);
 		scene.add( pointCloud );
+	}
+	
+	function initSpherePointCloud(vectors,color) {
+		console.log(vectors.length);
+		if(spherePointCloud !=null) {
+			scene.remove( spherePointCloud  );
+		}
+		var geometry = new THREE.Geometry();
+		for(i in vectors) {
+			geometry.vertices.push(vectors[i]);
+		}
+		var pMaterial = new THREE.PointCloudMaterial({
+                    color: 0xFF0000,
+                    size: 2,
+                    sizeAttenuation : false
+		});
+		spherePointCloud = new THREE.PointCloud(geometry,pMaterial);
+		scene.add( spherePointCloud );
 	}
 	
 	function render() {
