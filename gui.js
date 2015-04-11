@@ -1,4 +1,5 @@
 var daGui;
+var plateFolder
 
 var generateParams = {
 	depth: 0,
@@ -8,25 +9,30 @@ var generateParams = {
 	sphereOpacity: 0.1,
 	sphereTransparent : true,
 	basePointsColor: 0xFFFFFF,
+	basePointsSize: 1,
 	depthVertexColor: 0xFFFF00,
+	depthVertexSize: 2,
 	faceMeshColor: 0x99CCFF,
 	faceMeshOpacity: 1.0,
 	faceMeshTransparent : false,
 	faceMeshEnabled : false,
 	plateCount: 1,
 	generate: function() {
+		if(depthVectors) {
+			removePointCloud(depthVectors);
+			depthVector = null;
+		}
 		isCalculating=true;
 		nScale = generateParams.scale;
 		radius = generateParams.radius;
 		initVData();
 		initSphereTemplate();
 		generatePoints(Number.parseInt(generateParams.depth), radius);
-		initPointCloud(vdata,0xFFFFFF);
-		initSpherePointCloud(depthVectors,generateParams.depthVertexColor);
+		updateSpherePointCloud(depthVectors,generateParams.depthVertexColor,generateParams.depthVertexSize);
 		if(generateParams.faceMeshEnabled){
 			initFaces();
 		}
-		
+
 		generatePlates(generateParams.plateCount);
 		document.getElementById("status").innerHTML = "depthVectors generated";
 		document.getElementById("status").className = "ok";
@@ -56,18 +62,24 @@ function initGUI() {
 	
 	var depthVectorFolder = daGui.addFolder('depthVector settings');
 	var depthColorController = depthVectorFolder.addColor(generateParams, 'depthVertexColor');
+	var depthSizeController = depthVectorFolder.addColor(generateParams, 'depthVertexSize');
+	
 	var faceMeshFolder = daGui.addFolder('faceMesh settings');
 	var faceMeshColorController = faceMeshFolder.addColor(generateParams, 'faceMeshColor');
 	var faceController = daGui.add(generateParams, 'faceMeshEnabled');
 	
 	//daGui.add(generateParams, "faceMeshOpacity",0,1);
 	//daGui.add(generateParams, "faceMeshTransparent");
-	var plateFolder = daGui.addFolder('plate settings');
-	plateFolder.add(generateParams, "plateCount",1,5).step(1);
+	plateFolder = daGui.addFolder('plate settings');
+	var plateCountController = plateFolder.add(generateParams, "plateCount",1,5).step(1);
 	
 	daGui.add(generateParams, "generate");
-	daGui.add(generateParams, "generatePlates");
+	//daGui.add(generateParams, "generatePlates");
 	
+	/*
+	* gui callbacks
+	* holy callbacks batman
+	*/
 	depthController.onChange(function(value) {
 		generateParams.generate();
 	});
@@ -97,9 +109,9 @@ function initGUI() {
 		if(generateParams.faceMeshEnabled){
 			initFaces();
 			animate();
-			console("");
+			//console("");
 		}else {
-			console("remove");
+			//console("remove");
 			scene.remove(depthFaces);
 			animate();
 		}
@@ -113,5 +125,11 @@ function initGUI() {
 			scene.remove(depthFaces);
 			animate();
 		}
+	});
+	
+	plateCountController.onChange(function(value) {
+		generateParams.generate();
+		generateParams.generatePlates();
+		animate();
 	});
 }

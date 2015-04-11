@@ -5,7 +5,8 @@ var radius = 1;
 var vdata, tindices;
 var depthTriangles;
 var seedVectorIndices;
-var colorFolder;
+var colorFolder; 
+var plateColorCount = 0; //color folder hack
 
 //var duplicateVertexCount;
 //var duplicateTriangeCount;
@@ -18,17 +19,35 @@ vdata = [
 
 function subdivide(v1, v2, v3, sphere_points, d) {
     if(d == 0) {
-		//add the vector to to sphere_points
+		/*
+		*	This entire block is pretty inefficient at the moment.
+		*
+		*	The same vector are iterated over multiple times for each triangle.
+		*	addAdjectProperty and containsVector are called each time.
+		*	The first to add a property adjacent to each vector3 if it doesn't exist and
+		*	the second to check and see if the vector3 needs to be added to sphere_points
+		*	
+		*	Both of these can be done when the vector3s are created.
+		*	This happens in two locations. 
+		*	In here [subdivide] when each vector3s is cloned before a subdivide and
+		* 	in initVData where the initial vector3s are created.
+		*
+		*/
+		//add the vectors to sphere_points if they aren't already there
 		if(containsVector(v1,sphere_points)) {
+			v1.plate = null;
 			sphere_points.push(v1);
 		}
 		if(containsVector(v2,sphere_points)) {
+			v1.plate = null;
 			sphere_points.push(v2);
 		}
 		if(containsVector(v3,sphere_points)) {
+			v1.plate = null;
 			sphere_points.push(v3);
 		}
 		
+		//add the property adjacent if it doesn't exist
 		addAdjectProperty(v1);
 		if(containsVector(v2,v1.adjacent)) {
 			v1.adjacent.push(v2);
@@ -53,6 +72,10 @@ function subdivide(v1, v2, v3, sphere_points, d) {
 		if(containsVector(v2,v3.adjacent)) {
 			v3.adjacent.push(v2);
 		}
+		/*
+		*	end inefficient 
+		*
+		*/
 		
 		var triangle = new THREE.Triangle(v1,v2,v3);
 		triangle.set(v1,v2,v3);
@@ -151,6 +174,31 @@ function generatePoints(depth, radius) {
 	depthVectors = sphere_points;
 	document.getElementById("vertices").innerHTML = sphere_points.length;
 }
+
+
+/*
+*	Expand plates.
+*	If the vector is part of a plate checks if the adjacent vectors have plates.
+*	If they do not they are assigned the starting vectors plates.
+*	This function is not recursive and iterates through depthVector once.
+*
+*/
+function expandPlates() {
+	if(depthVectors) {
+		for(i in depthVectors) { //for each vector
+			if(depthVector[i].plate) { //if vector is part of a plate
+				for(j in depthVector[i].adjacent) { //for each adjacent vector 
+					if(!depthVector[i].adjacent[j].plate) { //if vector is not part of a plate
+						depthVector[i].adjacent[j].plate = depthVector.plate; //add the vector to the plate
+						depthVector[i].plate.vectors.push(depthVector[i].adjacent[j]); //add reference to the plate in the vector
+					}
+				}
+			}
+		}
+	}
+}
+
+
 /*
 *	creates the initial plate seeds
 *
@@ -163,21 +211,35 @@ function generatePlates(plateCount) {
 		var plate = new Object();
 		var num = Number.parseInt(Math.random()* depthVectors.length-1);
 		while(seedVectorIndices.indexOf(num)!=-1) {
-			num = num = Number.parseInt(Math.random()* depthVectors.length-1);
+			num = Number.parseInt(Math.random()* depthVectors.length-1);
 		}
 		seedVectorIndices.push(num);
-		plate.seedVector = depthVectors[num];
+		
+		//create plate
+		plate.vectors = new Array();
+		plate.vectors.push(depthVectors[num]); //add reference to the vector in the plate
+		depthVectors[num].plate = plate; //add reference to the plate in the vector
 		plate.color = new THREE.Color(Math.random(),Math.random(),Math.random());
+		
 		plates.push(plate);
 		n--;
 	}
+	
+	//color folder hack
 	if(colorFolder) {
-		
+		if(plateCount>plateColorCount) {
+			while(plateCount>plateColorCount) {
+				colorFolder.addColor(plates[plateColorCount], "color");
+				plateColorCount++;
+			}
+		}else if(plateCount<plateColorCount) {
+			//TODO remove color
+		}
 	}else {
-		colorFolder = daGui.addFolder('Plate Colors');
+		colorFolder = plateFolder.addFolder('Plate Colors');
 		for(i in plates) {
-			console.log(plates[i]);
-			daGui.addColor(plates[i], "color");
+			colorFolder.addColor(plates[i], "color");
+			plateColorCount++;
 		}
 	}
 }

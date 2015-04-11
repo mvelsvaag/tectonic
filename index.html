@@ -35,6 +35,8 @@
 			}
 		</style>
 <script src="three.js/build/three.js"></script>
+<script src="three.js/examples/js/renderers/CanvasRenderer.js"></script>
+<script src="three.js/examples/js/renderers/Projector.js"></script>
 <script src="dat.gui/build/dat.gui.js"></script>
 <script src="stats.js/build/stats.min.js"></script>
 <script src="three.js/examples/js/controls/OrbitControls.js"></script>
@@ -81,7 +83,7 @@
 				
 		container = document.getElementById( "container" );
 		
-		renderer = new THREE.WebGLRenderer( { antialias: true } );
+		renderer = new THREE.WebGLRenderer( );
 		renderer.setPixelRatio( window.devicePixelRatio );
 		renderer.setSize( window.innerWidth, window.innerHeight );
 		renderer.sortObjects = false;
@@ -95,7 +97,7 @@
 		container.appendChild( stats.domElement );
 		
 		initScene();
-		initPointCloud(vdata);
+		updateSpherePointCloud(vdata,generateParams.basePointsColor,generateParams.basePointsSize); //base vectors
 	}
 
 	function initSphereTemplate() {
@@ -113,6 +115,11 @@
 		scene.add( sphere );
 	}
 	
+	
+	/*
+	*	point clouds
+	*/
+	/*
 	function initPointCloud(vectors,color) {
 		if(pointCloud!=null) {
 			scene.remove( pointCloud );
@@ -130,10 +137,11 @@
 		pointCloud.scale.set(nScale,nScale,nScale);
 		scene.add( pointCloud );
 	}
+	*/
 	
-	function initSpherePointCloud(vectors,color) {
-		if(spherePointCloud !=null) {
-			scene.remove( spherePointCloud  );
+	function updateSpherePointCloud(vectors,color,size) {
+		if(vectors.pointCloud !=null) {
+			scene.remove( vectors.pointCloud  ); //remove the old cloud
 		}
 		var geometry = new THREE.Geometry();
 		for(i in vectors) {
@@ -141,12 +149,18 @@
 		}
 		var pMaterial = new THREE.PointCloudMaterial({
                     color: color,
-                    size: 2,
+                    size: size,
                     sizeAttenuation : false
 		});
-		spherePointCloud = new THREE.PointCloud(geometry,pMaterial);
-		spherePointCloud.scale.set(nScale,nScale,nScale);
-		scene.add( spherePointCloud );
+		vectors.pointCloud = new THREE.PointCloud(geometry,pMaterial);
+		vectors.pointCloud.scale.set(nScale,nScale,nScale);
+		scene.add( vectors.pointCloud );
+	}
+	
+	function removePointCloud(vectors) {
+		if(vectors.pointCloud !=null) {
+			scene.remove( vectors.pointCloud  ); //remove the old cloud
+		}
 	}
 	
 	function initFaces() {
