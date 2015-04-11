@@ -22,6 +22,7 @@ var generateParams = {
 		initSphereTemplate();
 		generatePoints(Number.parseInt(generateParams.depth), radius);
 		initPointCloud(vdata,0xFFFFFF);
+		initSpherePointCloud(depthVectors,generateParams.depthVertexColor);
 		if(generateParams.faceMeshEnabled){
 			initFaces();
 		}
@@ -46,19 +47,48 @@ var generateParams = {
 function initGUI() {
 	daGui = new dat.GUI();
 
-	daGui.add(generateParams, "depth",0,5).step(1);
+	var depthController = daGui.add(generateParams, "depth",0,5).step(1);
 	daGui.add(generateParams, "scale",1,5).step(1);
-	daGui.addColor(generateParams, 'sphereColor');
-	daGui.add(generateParams, "sphereOpacity",0,1);
-	daGui.add(generateParams, "sphereTransparent");
-	daGui.addColor(generateParams, 'depthVertexColor');
-	daGui.addColor(generateParams, 'faceMeshColor');
+	var sphereFolder = daGui.addFolder('sphere settings');
+	sphereFolder.addColor(generateParams, 'sphereColor');
+	sphereFolder.add(generateParams, "sphereOpacity",0,1);
+	sphereFolder.add(generateParams, "sphereTransparent");
+	
+	var depthVectorFolder = daGui.addFolder('depthVector settings');
+	var depthColorController = depthVectorFolder.addColor(generateParams, 'depthVertexColor');
+	var faceMeshFolder = daGui.addFolder('faceMesh settings');
+	var faceMeshColorController = faceMeshFolder.addColor(generateParams, 'faceMeshColor');
 	var faceController = daGui.add(generateParams, 'faceMeshEnabled');
+	
 	//daGui.add(generateParams, "faceMeshOpacity",0,1);
 	//daGui.add(generateParams, "faceMeshTransparent");
-	daGui.add(generateParams, "plateCount",1,5).step(1);
+	var plateFolder = daGui.addFolder('plate settings');
+	plateFolder.add(generateParams, "plateCount",1,5).step(1);
+	
 	daGui.add(generateParams, "generate");
 	daGui.add(generateParams, "generatePlates");
+	
+	depthController.onChange(function(value) {
+		generateParams.generate();
+	});
+	
+	
+	depthColorController.onChange(function(value) {
+		initSpherePointCloud(depthVectors,generateParams.depthVertexColor);
+		animate();
+	});
+	
+	faceMeshColorController.onChange(function(value) {
+		if(generateParams.faceMeshEnabled){
+			initFaces();
+			animate();
+			console("");
+		}else {
+			console("remove");
+			scene.remove(depthFaces);
+			animate();
+		}
+	});
 	
 	faceController.onChange(function(value) {
 		if(generateParams.faceMeshEnabled){

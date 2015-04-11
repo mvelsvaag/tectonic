@@ -140,7 +140,7 @@
 			geometry.vertices.push(vectors[i]);
 		}
 		var pMaterial = new THREE.PointCloudMaterial({
-                    color: generateParams.depthVertexColor,
+                    color: color,
                     size: 2,
                     sizeAttenuation : false
 		});
@@ -209,7 +209,8 @@
 </head>
 <body>
 <div class="info">
-			<a href="http://threejs.org" target="_blank">three.js</a> webgl tectonic model - by <a href="https://twitter.com/rkaganda">rkaganda</a> - <a href="https://github.com/rkaganda/tectonic">github</a>
+			<a href="http://threejs.org" target="_blank">three.js</a> webgl tectonic model  version1b - by <a href="https://twitter.com/rkaganda">rkaganda</a> - <a href="https://github.com/rkaganda/tectonic">github</a>
+			<br>
 			<br><span> vertices=</span><span id="vertices">0</span><span> faces=</span><span id="faces">0</span>
 			<br>
 			<span id="status"><span>

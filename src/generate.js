@@ -148,7 +148,6 @@ function generatePoints(depth, radius) {
 	duplicateTriangeCount = 0;
 	depthTriangles = new Array();
 	initialize_sphere(sphere_points, depth); // where DEPTH should be the subdivision depth
-	initSpherePointCloud(sphere_points,0xFF0000);
 	depthVectors = sphere_points;
 	document.getElementById("vertices").innerHTML = sphere_points.length;
 }
@@ -166,7 +165,6 @@ function generatePlates(plateCount) {
 		while(seedVectorIndices.indexOf(num)!=-1) {
 			num = num = Number.parseInt(Math.random()* depthVectors.length-1);
 		}
-		console.log(num);
 		seedVectorIndices.push(num);
 		plate.seedVector = depthVectors[num];
 		plate.color = new THREE.Color(Math.random(),Math.random(),Math.random());
@@ -177,7 +175,6 @@ function generatePlates(plateCount) {
 		
 	}else {
 		colorFolder = daGui.addFolder('Plate Colors');
-		console.log(colorFolder);
 		for(i in plates) {
 			console.log(plates[i]);
 			daGui.addColor(plates[i], "color");
