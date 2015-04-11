@@ -79,7 +79,7 @@ function subdivide(v1, v2, v3, sphere_points, d) {
 		
 		var triangle = new THREE.Triangle(v1,v2,v3);
 		triangle.set(v1,v2,v3);
-		if(pushTriangle(triangle)) {
+		if(pushTriangle(triangle)) { //always true (efficient);
 			depthTriangles.push(triangle);
 		}
         return;
@@ -96,7 +96,7 @@ function subdivide(v1, v2, v3, sphere_points, d) {
 
 function addAdjectProperty(v) {
 	if(typeof v.adjacent =="undefined") {
-			v.adjacent = new Array();
+		v.adjacent = new Array();
 	}
 }
 
@@ -118,6 +118,8 @@ function containsVector(v,vectors) {
 	}
 }
 
+//pretty sure this never gets called
+//its a just in case
 function pushTriangle(triangle) {
 	var contains = false;
 	function checkFace(i) {
@@ -196,6 +198,10 @@ function expandPlates() {
 			}
 		}
 	}
+	
+	for(i in plates) { //for each plate
+		removePointCloud(depthVectors);
+	}
 }
 
 
@@ -220,7 +226,7 @@ function generatePlates(plateCount) {
 		plate.vectors.push(depthVectors[num]); //add reference to the vector in the plate
 		depthVectors[num].plate = plate; //add reference to the plate in the vector
 		plate.color = new THREE.Color(Math.random(),Math.random(),Math.random());
-		
+		plate.pointSize = 1;
 		plates.push(plate);
 		n--;
 	}
@@ -230,15 +236,17 @@ function generatePlates(plateCount) {
 		if(plateCount>plateColorCount) {
 			while(plateCount>plateColorCount) {
 				colorFolder.addColor(plates[plateColorCount], "color");
+				colorFolder.add(plates[i], "pointSize");
 				plateColorCount++;
 			}
 		}else if(plateCount<plateColorCount) {
 			//TODO remove color
 		}
 	}else {
-		colorFolder = plateFolder.addFolder('Plate Colors');
+		colorFolder = daGui.addFolder('plate settings');
 		for(i in plates) {
 			colorFolder.addColor(plates[i], "color");
+			colorFolder.add(plates[i], "pointSize");
 			plateColorCount++;
 		}
 	}

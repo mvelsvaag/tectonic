@@ -55,6 +55,9 @@ function initGUI() {
 
 	var depthController = daGui.add(generateParams, "depth",0,5).step(1);
 	var scaleController = daGui.add(generateParams, "scale",1,5).step(1);
+	var faceController = daGui.add(generateParams, 'faceMeshEnabled');
+	var plateCountController = daGui.add(generateParams, "plateCount",1,5).step(1);
+	daGui.add(generateParams, "generate");
 	var sphereFolder = daGui.addFolder('sphere settings');
 	var sphereColorController = sphereFolder.addColor(generateParams, 'sphereColor');
 	var sphereOpacityController = sphereFolder.add(generateParams, "sphereOpacity",0,1);
@@ -62,18 +65,14 @@ function initGUI() {
 	
 	var depthVectorFolder = daGui.addFolder('depthVector settings');
 	var depthColorController = depthVectorFolder.addColor(generateParams, 'depthVertexColor');
-	var depthSizeController = depthVectorFolder.addColor(generateParams, 'depthVertexSize');
+	var depthSizeController = depthVectorFolder.add(generateParams, 'depthVertexSize',1,5).step(1);
 	
 	var faceMeshFolder = daGui.addFolder('faceMesh settings');
 	var faceMeshColorController = faceMeshFolder.addColor(generateParams, 'faceMeshColor');
-	var faceController = daGui.add(generateParams, 'faceMeshEnabled');
 	
 	//daGui.add(generateParams, "faceMeshOpacity",0,1);
 	//daGui.add(generateParams, "faceMeshTransparent");
-	plateFolder = daGui.addFolder('plate settings');
-	var plateCountController = plateFolder.add(generateParams, "plateCount",1,5).step(1);
 	
-	daGui.add(generateParams, "generate");
 	//daGui.add(generateParams, "generatePlates");
 	
 	/*
@@ -96,13 +95,13 @@ function initGUI() {
 		generateParams.generate();
 	});
 	
-	sphereColorController.onChange(function(value) {
+	depthColorController.onChange(function(value) {
 		generateParams.generate();
 	});
 	
-	depthColorController.onChange(function(value) {
-		initSpherePointCloud(depthVectors,generateParams.depthVertexColor);
-		animate();
+	
+	depthSizeController.onChange(function(value) {
+		generateParams.generate();
 	});
 	
 	faceMeshColorController.onChange(function(value) {
@@ -118,10 +117,8 @@ function initGUI() {
 	});
 	
 	faceController.onChange(function(value) {
-		if(generateParams.faceMeshEnabled){
-			initFaces();
-			animate();
-		}else {
+		generateParams.generate();
+		if(!generateParams.faceMeshEnabled){
 			scene.remove(depthFaces);
 			animate();
 		}
