@@ -73,8 +73,6 @@
 		
 		var fillLight = new THREE.AmbientLight( 0x666666 );
 		scene.add( fillLight );
-		
-		initSphereTemplate();
 	}
 	
 	function init() {
@@ -99,10 +97,11 @@
 		updateSpherePointCloud(vdata,generateParams.basePointsColor,generateParams.basePointsSize); //base vectors
 	}
 
-	function initSphereTemplate() {
+	function updateSphereTemplate() {
 		if(sphere!=null) {
 			scene.remove( sphere );
 		}
+		if(generateParams.sphereMeshEnabled){
 		var geometry = new THREE.SphereGeometry( radius, 32, 32 );
 		var material = new THREE.MeshLambertMaterial({
 			color: generateParams.sphereColor, 
@@ -112,6 +111,7 @@
 		sphere = new THREE.Mesh( geometry, material );
 		sphere.scale.set(nScale,nScale,nScale);
 		scene.add(sphere);
+		}
 	}
 	
 	
@@ -185,23 +185,9 @@
 	
 	function animate() {
 		updateGUIs();
-		animateClouds();
 		controls.update();
 		render();
 		requestAnimationFrame( animate );
-	}
-	
-	function animateClouds() {
-		var i=0;
-		while(i<plates.length) {
-			plate = plates[i];
-			if(typeof plate!="undefined") {
-				if(plates[i].animateExpand) {
-					updateSpherePointCloud(plate.vectors,plate.color,plate.pointSize);
-				}
-			}
-			i++;
-		}
 	}
 	
 	function onWindowResize() {

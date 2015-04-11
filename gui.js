@@ -5,6 +5,7 @@ var generateParams = {
 	depth: 0,
 	radius: 1,
 	scale: 1,
+	sphereMeshEnabled: true,
 	sphereColor: 0xffffff,
 	sphereOpacity: 0.1,
 	sphereTransparent : true,
@@ -32,7 +33,9 @@ function refresh() {
 		radius = generateParams.radius;
 
 		initVData();
-		initSphereTemplate();
+		if(generateParams.sphereMeshEnabled) {
+			updateSphereTemplate();
+		}
 		generatePoints(Number.parseInt(generateParams.depth), radius);
 		updateSpherePointCloud(depthVectors,generateParams.depthVertexColor,generateParams.depthVertexSize);
 		if(generateParams.faceMeshEnabled){
@@ -57,6 +60,7 @@ function createPlates() {
 		plate.vectorCount = "0";
 		plate.expand = function() {
 			expandPlate(plate);
+			updateSpherePointCloud(plate.vectors,plate.color,plate.pointSize);
 			animate();
 		}
 		plates.push(plate);
@@ -117,10 +121,11 @@ function updateGUIs() {
 
 function initGUI() {
 	daGui = new dat.GUI();
-
+	
 	var depthController = daGui.add(generateParams, "depth",0,5).step(1);
 	var scaleController = daGui.add(generateParams, "scale",1,5).step(1);
 	var sphereFolder = daGui.addFolder('sphere settings');
+	var sphereController = sphereFolder.add(generateParams, 'sphereMeshEnabled');
 	var sphereColorController = sphereFolder.addColor(generateParams, 'sphereColor');
 	var sphereOpacityController = sphereFolder.add(generateParams, "sphereOpacity",0,1);
 	var sphereTransparentController = sphereFolder.add(generateParams, "sphereTransparent");
@@ -134,6 +139,7 @@ function initGUI() {
 	var faceMeshColorController = faceMeshFolder.addColor(generateParams, 'faceMeshColor');
 	daGui.add(generateParams, "generatePlates");
 	var plateCountController = daGui.add(generateParams, "plateCount",0,5).step(1);
+
 	
 	/*
 	* gui callbacks
@@ -147,6 +153,9 @@ function initGUI() {
 		refresh();
 	});
 
+	sphereController.onChange(function(value) {
+		updateSphereTemplate();
+	});
 	sphereColorController.onChange(function(value) {
 		initSphereTemplate();
 	});	
