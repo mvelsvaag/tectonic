@@ -48,11 +48,10 @@
 	var scene, camera;
 	var lighting = new Object();
 	
-	var pointCloud, spherePointCloud,depthFaces,depthVectors,plates;
+	var pointCloud, spherePointCloud,depthFaces,depthVectors, pointClouds;
+	var plates = new Array();
 	var sphere;
 	var nScale =1;
-	var isCalculating = false; //stop rendering heavy maths
-	
 	
 	function initScene() {
 		camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 1, 10000 );
@@ -120,7 +119,6 @@
 	*	point clouds
 	*/
 	function updateSpherePointCloud(vectors,color,size) {
-		console.log(color);
 		if(vectors.pointCloud !=null) {
 			scene.remove( vectors.pointCloud  ); //remove the old cloud
 		}
@@ -178,14 +176,29 @@
 	}
 	
 	function animate() {
-		if(!isCalculating) {
-			requestAnimationFrame( animate );
-		}
+		updateGUIs();
+		animateClouds();
 		controls.update();
-	
 		render();
-		
+		requestAnimationFrame( animate );
 	}
+	
+	function animateClouds() {
+		while(i<plates.length) {
+			plate = plates[i];
+			if(typeof plate!="undefined") {
+			
+				if(plates[i].animateExpand) {
+					expandPlate(plates[i]);
+					console.log(i);
+					console.log(typeof plate);
+					updateSpherePointCloud(plate.vectors,plate.color,plate.pointSize);
+				}
+			}
+			i++;
+		}
+	}
+	
 	function onWindowResize() {
 				camera.aspect = window.innerWidth / window.innerHeight;
 				camera.updateProjectionMatrix();

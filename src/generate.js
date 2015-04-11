@@ -184,16 +184,13 @@ function generatePoints(depth, radius) {
 *	This function is not recursive and iterates through depthVector once.
 *
 */
-function expandPlates() {
-	if(depthVectors) {
-		for(i in depthVectors) { //for each vector
-			if(depthVectors[i].plate) { //if vector is part of a plate
-				for(j in depthVectors[i].adjacent) { //for each adjacent vector 
-					if(!depthVectors[i].adjacent[j].plate) { //if vector is not part of a plate
-						depthVectors[i].adjacent[j].plate = depthVectors[i].plate; //add the vector to the plate
-						depthVectors[i].plate.vectors.push(depthVectors[i].adjacent[j]); //add reference to the plate in the vector
-					}
-				}
+function expandPlate(plate) {
+	for(i in plate.vectors) { //for each vector
+		for(j in plate.vectors[i].adjacent) { //for each adjacent vector 
+			if(typeof plate.vectors[i].adjacent[j].plate=="undefined") { //if vector is not part of a plate
+				plate.vectors[i].adjacent[j].plate = plate.vectors[i].plate; //add the vector to the plate
+				plate.vectors[i].plate.vectors.push(plate.vectors[i].adjacent[j]); //add reference to the plate in the vector
+				plate.vectors[i].plate.count = plate.vectors[i].plate.vectors.length; //update the count
 			}
 		}
 	}
@@ -205,11 +202,10 @@ function expandPlates() {
 */
 function seedPlate(i) {
 	if(plates[i]) {
- 	console.log(i);
-	console.log(plates[i].vectors.length);
 	var num = Number.parseInt(Math.random()* depthVectors.length);
 	if(containsVector(depthVectors[num],plates[i].vectors)) {
 		plates[i].vectors.push(depthVectors[num]); //add reference to the vector in the plate
+		plates[i].count = plates[i].vectors.length; //update the count
 		depthVectors[num].plate = plates[i]; //add reference to the plate in the vector
 	}
 	return true;
