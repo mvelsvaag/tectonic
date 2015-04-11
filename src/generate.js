@@ -190,7 +190,7 @@ function expandPlate(plate) {
 			if(typeof plate.vectors[i].adjacent[j].plate=="undefined") { //if vector is not part of a plate
 				plate.vectors[i].adjacent[j].plate = plate.vectors[i].plate; //add the vector to the plate
 				plate.vectors[i].plate.vectors.push(plate.vectors[i].adjacent[j]); //add reference to the plate in the vector
-				plate.vectors[i].plate.count = plate.vectors[i].plate.vectors.length; //update the count
+				plate.vectors[i].plate.vectorCount = plate.vectors[i].plate.vectors.length; //update the count
 			}
 		}
 	}
@@ -205,8 +205,9 @@ function seedPlate(i) {
 	var num = Number.parseInt(Math.random()* depthVectors.length);
 	if(containsVector(depthVectors[num],plates[i].vectors)) {
 		plates[i].vectors.push(depthVectors[num]); //add reference to the vector in the plate
-		plates[i].count = plates[i].vectors.length; //update the count
+		plates[i].vectorCount = plates[i].vectors.length; //update the count
 		depthVectors[num].plate = plates[i]; //add reference to the plate in the vector
+		animate();
 	}
 	return true;
 	}

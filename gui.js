@@ -38,6 +38,10 @@ function refresh() {
 		if(generateParams.faceMeshEnabled){
 			initFaces();
 		}
+		if(plateGUI){
+			removeAllPointClouds();
+			createPlates();
+		}
 		animate();	
 }
 
@@ -47,10 +51,14 @@ function createPlates() {
 		//create plate
 		var plate = new Object();
 		plate.vectors = new Array();
-		plate.color = new THREE.Color(Math.random(),Math.random(),Math.random()).getHex();
+		plate.color = new THREE.Color(1,1,1).getHex(); //default plate color
 		plate.animateExpand = false;
 		plate.pointSize = 3;
-		plate.count = "0";
+		plate.vectorCount = "0";
+		plate.expand = function() {
+			expandPlate(plate);
+			animate();
+		}
 		plates.push(plate);
 	}
 	updateColorFolder();
@@ -73,10 +81,10 @@ function updateColorFolder() {
 	plateGUI = new dat.GUI();
 	plateGUI.add(p, "seedPlates");
 	for(i in plates) { //for each plate
-		var	sizeController = plateGUI.add(plates[i], 'count');
+		var	sizeController = plateGUI.add(plates[i], 'vectorCount');
 		var colorController = plateGUI.addColor(plates[i], 'color');
 		var sizeController = plateGUI.add(plates[i], 'pointSize',1,5).step(1);
-		var anmiateController = plateGUI.add(plates[i], 'animateExpand');
+		var expandPlate = plateGUI.add(plates[i], 'expand');
 		
 		colorController.onChange(function(value) {
 			if(this.object.vectors) {
@@ -134,6 +142,10 @@ function initGUI() {
 	depthController.onChange(function(value) {
 		refresh();
 	});
+	
+	scaleController.onChange(function(value) {
+		refresh();
+	});
 
 	sphereColorController.onChange(function(value) {
 		initSphereTemplate();
@@ -145,10 +157,6 @@ function initGUI() {
 	sphereTransparentController.onChange(function(value) {
 		initSphereTemplate();
 		animate();
-	});
-	
-	scaleController.onChange(function(value) {
-		refresh();
 	});
 	
 	depthColorController.onChange(function(value) {
