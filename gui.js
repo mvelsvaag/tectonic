@@ -48,11 +48,11 @@ function initGUI() {
 	daGui = new dat.GUI();
 
 	var depthController = daGui.add(generateParams, "depth",0,5).step(1);
-	daGui.add(generateParams, "scale",1,5).step(1);
+	var scaleController = daGui.add(generateParams, "scale",1,5).step(1);
 	var sphereFolder = daGui.addFolder('sphere settings');
-	sphereFolder.addColor(generateParams, 'sphereColor');
-	sphereFolder.add(generateParams, "sphereOpacity",0,1);
-	sphereFolder.add(generateParams, "sphereTransparent");
+	var sphereColorController = sphereFolder.addColor(generateParams, 'sphereColor');
+	var sphereOpacityController = sphereFolder.add(generateParams, "sphereOpacity",0,1);
+	var sphereTransparentController = sphereFolder.add(generateParams, "sphereTransparent");
 	
 	var depthVectorFolder = daGui.addFolder('depthVector settings');
 	var depthColorController = depthVectorFolder.addColor(generateParams, 'depthVertexColor');
@@ -72,6 +72,21 @@ function initGUI() {
 		generateParams.generate();
 	});
 	
+	sphereOpacityController.onChange(function(value) {
+		generateParams.generate();
+	});
+	
+	sphereTransparentController.onChange(function(value) {
+		generateParams.generate();
+	});
+	
+	scaleController.onChange(function(value) {
+		generateParams.generate();
+	});
+	
+	sphereColorController.onChange(function(value) {
+		generateParams.generate();
+	});
 	
 	depthColorController.onChange(function(value) {
 		initSpherePointCloud(depthVectors,generateParams.depthVertexColor);
