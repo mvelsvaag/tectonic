@@ -200,7 +200,7 @@ function generatePoints(depth, radius) {
 
 function expandPlate(n) {
 		if (plates[n]) {
-			var plate = plates[i];
+			var plate = plates[n];
 			for (var i in plate.vectors) { //for each vector
 				for (var j in plate.vectors[i].adjacent) { //for each adjacent vector 
 					if (typeof plate.vectors[i].adjacent[j].plate == "undefined") { //if vector is not part of a plate
