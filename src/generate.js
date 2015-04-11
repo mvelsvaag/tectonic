@@ -48,26 +48,26 @@ function subdivide(v1, v2, v3, sphere_points, d) {
 		}
 		//add the property adjacent if it doesn't exist
 		addAdjectProperty(v1);
-		if (containsVector(v2, v1.adjacent)) {
+		/*if (containsVector(v2, v1.adjacent)) {
 			v1.adjacent.push(v2);
 		}
 		if (containsVector(v3, v1.adjacent)) {
 			v1.adjacent.push(v3);
-		}
+		}*/
 		addAdjectProperty(v2);
-		if (containsVector(v1, v2.adjacent)) {
+		/*if (containsVector(v1, v2.adjacent)) {
 			v2.adjacent.push(v1);
 		}
 		if (containsVector(v3, v2.adjacent)) {
 			v2.adjacent.push(v3);
-		}
+		}*/
 		addAdjectProperty(v3);
-		if (containsVector(v1, v3.adjacent)) {
+		/*if (containsVector(v1, v3.adjacent)) {
 			v3.adjacent.push(v1);
 		}
 		if (containsVector(v2, v3.adjacent)) {
 			v3.adjacent.push(v2);
-		}
+		}*/
 		/*
 		 *	end inefficient
 		 *
@@ -188,6 +188,11 @@ function generatePoints(depth, radius) {
 		depthTriangles = new Array();
 		initialize_sphere(sphere_points, depth); // where DEPTH should be the subdivision depth
 		depthVectors = sphere_points;
+		
+		tindices = getVectors(); //adjacent.js
+		sets = getEdges(); //edges.js adds adjacents to depthVectors
+
+
 		document.getElementById("vertices").innerHTML = sphere_points.length;
 	}
 	/*
