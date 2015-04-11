@@ -207,7 +207,6 @@ function seedPlate(i) {
 		plates[i].vectors.push(depthVectors[num]); //add reference to the vector in the plate
 		plates[i].vectorCount = plates[i].vectors.length; //update the count
 		depthVectors[num].plate = plates[i]; //add reference to the plate in the vector
-		animate();
 	}
 	return true;
 	}

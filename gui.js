@@ -45,7 +45,6 @@ function refresh() {
 			removeAllPointClouds();
 			createPlates();
 		}
-		animate();	
 }
 
 function createPlates() {
@@ -61,7 +60,6 @@ function createPlates() {
 		plate.expand = function() {
 			expandPlate(plate);
 			updateSpherePointCloud(plate.vectors,plate.color,plate.pointSize);
-			animate();
 		}
 		plates.push(plate);
 	}
@@ -74,7 +72,6 @@ function updateColorFolder() {
 			for(i in plates) {
 				if(seedPlate(i)) {
 					updateSpherePointCloud(plates[i].vectors,plates[i].color,plates[i].pointSize);
-					animate();
 				}
 			}
 		}
@@ -93,14 +90,12 @@ function updateColorFolder() {
 		colorController.onChange(function(value) {
 			if(this.object.vectors) {
 				updateSpherePointCloud(this.object.vectors,this.object.color,this.object.pointSize);
-				animate();
 			}
 		});
 		
 		sizeController.onChange(function(value) {
 			if(this.object.vectors) {
 				updateSpherePointCloud(this.object.vectors,this.object.color,this.object.pointSize);
-				animate();
 			}
 		});
 	}
@@ -161,11 +156,9 @@ function initGUI() {
 	});	
 	sphereOpacityController.onChange(function(value) {
 		initSphereTemplate();
-		animate();
 	});
 	sphereTransparentController.onChange(function(value) {
 		initSphereTemplate();
-		animate();
 	});
 	
 	depthColorController.onChange(function(value) {
@@ -183,7 +176,6 @@ function initGUI() {
 			if(!generateParams.faceMeshEnabled){
 				document.getElementById("faces").innerHTML = 0;
 				scene.remove(depthFaces);
-				animate();
 			}
 		}
 	});
@@ -196,7 +188,6 @@ function initGUI() {
 			if(!generateParams.faceMeshEnabled){
 				document.getElementById("faces").innerHTML = 0;
 				scene.remove(depthFaces);
-				animate();
 			}
 		}
 	});
