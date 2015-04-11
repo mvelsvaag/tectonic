@@ -25,6 +25,14 @@
 			.info a {
 				color: #00ffff;
 			}
+			
+			.bad {
+				color: #FF0000;
+			}
+			
+			.ok {
+				color: #00FF00;
+			}
 		</style>
 <script src="three.js/build/three.js"></script>
 <script src="dat.gui/build/dat.gui.js"></script>
@@ -38,9 +46,10 @@
 	var scene, camera;
 	var lighting = new Object();
 	
-	var pointCloud, spherePointCloud,depthFaces,depthVectors;
+	var pointCloud, spherePointCloud,depthFaces,depthVectors,plates;
 	var sphere;
 	var nScale =1;
+	var isCalculating = false; //stop rendering heavy maths
 	
 	
 	function initScene() {
@@ -174,7 +183,9 @@
 	}
 	
 	function animate() {
-		requestAnimationFrame( animate );
+		if(!isCalculating) {
+			requestAnimationFrame( animate );
+		}
 		controls.update();
 	
 		render();
@@ -200,9 +211,9 @@
 <div class="info">
 			<a href="http://threejs.org" target="_blank">three.js</a> webgl tectonic model - by <a href="https://twitter.com/rkaganda">rkaganda</a> - <a href="https://github.com/rkaganda/tectonic">github</a>
 			<br><span> vertices=</span><span id="vertices">0</span><span> faces=</span><span id="faces">0</span>
+			<br>
+			<span id="status"><span>
 		</div>
-		
-		<div class="info"></div>
 		<div id="container"></div>
 </body>
 </html>

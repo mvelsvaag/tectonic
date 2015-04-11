@@ -4,6 +4,8 @@ var Z = 0.850650808352039932;
 var radius = 1;
 var vdata, tindices;
 var depthTriangles;
+var seedVectorIndices;
+var colorFolder;
 
 //var duplicateVertexCount;
 //var duplicateTriangeCount;
@@ -136,6 +138,10 @@ function initVData() {
     ]
 }
 
+/*
+*	Generate entry point.
+*
+*/
 function generatePoints(depth, radius) {
 	var sphere_points = new Array();
 	duplicateVertexCount = 0;
@@ -146,5 +152,35 @@ function generatePoints(depth, radius) {
 	depthVectors = sphere_points;
 	document.getElementById("vertices").innerHTML = sphere_points.length;
 }
-
-// Then for the sphere I want to draw, I  iterate over all the precomputed sphere points and with a linear function translate the sphere to its CENTER and chose the proper RADIUS
+/*
+*	creates the initial plate seeds
+*
+*/
+function generatePlates(plateCount) {
+	seedVectorIndices = new Array();
+	plates = new Array();
+	var n=plateCount;
+	while(n>0) {
+		var plate = new Object();
+		var num = Number.parseInt(Math.random()* depthVectors.length-1);
+		while(seedVectorIndices.indexOf(num)!=-1) {
+			num = num = Number.parseInt(Math.random()* depthVectors.length-1);
+		}
+		console.log(num);
+		seedVectorIndices.push(num);
+		plate.seedVector = depthVectors[num];
+		plate.color = new THREE.Color(Math.random(),Math.random(),Math.random());
+		plates.push(plate);
+		n--;
+	}
+	if(colorFolder) {
+		
+	}else {
+		colorFolder = daGui.addFolder('Plate Colors');
+		console.log(colorFolder);
+		for(i in plates) {
+			console.log(plates[i]);
+			daGui.addColor(plates[i], "color");
+		}
+	}
+}
