@@ -83,6 +83,10 @@ function initGUI() {
 		generateParams.generate();
 	});
 	
+	sphereColorController.onChange(function(value) {
+		generateParams.generate();
+	});
+	
 	sphereOpacityController.onChange(function(value) {
 		generateParams.generate();
 	});
