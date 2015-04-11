@@ -4,7 +4,6 @@ var Z = 0.850650808352039932;
 var radius = 1;
 var vdata, tindices;
 var depthTriangles;
-var seedVectorIndices;
 var colorFolder; 
 var plateColorCount = 0; //color folder hack
 
@@ -188,66 +187,32 @@ function generatePoints(depth, radius) {
 function expandPlates() {
 	if(depthVectors) {
 		for(i in depthVectors) { //for each vector
-			if(depthVector[i].plate) { //if vector is part of a plate
-				for(j in depthVector[i].adjacent) { //for each adjacent vector 
-					if(!depthVector[i].adjacent[j].plate) { //if vector is not part of a plate
-						depthVector[i].adjacent[j].plate = depthVector.plate; //add the vector to the plate
-						depthVector[i].plate.vectors.push(depthVector[i].adjacent[j]); //add reference to the plate in the vector
+			if(depthVectors[i].plate) { //if vector is part of a plate
+				for(j in depthVectors[i].adjacent) { //for each adjacent vector 
+					if(!depthVectors[i].adjacent[j].plate) { //if vector is not part of a plate
+						depthVectors[i].adjacent[j].plate = depthVectors[i].plate; //add the vector to the plate
+						depthVectors[i].plate.vectors.push(depthVectors[i].adjacent[j]); //add reference to the plate in the vector
 					}
 				}
 			}
 		}
 	}
-	
-	for(i in plates) { //for each plate
-		removePointCloud(depthVectors);
-	}
 }
-
 
 /*
 *	creates the initial plate seeds
 *
 */
-function generatePlates(plateCount) {
-	seedVectorIndices = new Array();
-	plates = new Array();
-	var n=plateCount;
-	while(n>0) {
-		var plate = new Object();
-		var num = Number.parseInt(Math.random()* depthVectors.length-1);
-		while(seedVectorIndices.indexOf(num)!=-1) {
-			num = Number.parseInt(Math.random()* depthVectors.length-1);
-		}
-		seedVectorIndices.push(num);
-		
-		//create plate
-		plate.vectors = new Array();
-		plate.vectors.push(depthVectors[num]); //add reference to the vector in the plate
-		depthVectors[num].plate = plate; //add reference to the plate in the vector
-		plate.color = new THREE.Color(Math.random(),Math.random(),Math.random());
-		plate.pointSize = 1;
-		plates.push(plate);
-		n--;
+function seedPlate(i) {
+	if(plates[i]) {
+ 	console.log(i);
+	console.log(plates[i].vectors.length);
+	var num = Number.parseInt(Math.random()* depthVectors.length);
+	if(containsVector(depthVectors[num],plates[i].vectors)) {
+		plates[i].vectors.push(depthVectors[num]); //add reference to the vector in the plate
+		depthVectors[num].plate = plates[i]; //add reference to the plate in the vector
 	}
-	
-	//color folder hack
-	if(colorFolder) {
-		if(plateCount>plateColorCount) {
-			while(plateCount>plateColorCount) {
-				colorFolder.addColor(plates[plateColorCount], "color");
-				colorFolder.add(plates[i], "pointSize");
-				plateColorCount++;
-			}
-		}else if(plateCount<plateColorCount) {
-			//TODO remove color
-		}
-	}else {
-		colorFolder = daGui.addFolder('plate settings');
-		for(i in plates) {
-			colorFolder.addColor(plates[i], "color");
-			colorFolder.add(plates[i], "pointSize");
-			plateColorCount++;
-		}
+	return true;
 	}
+	return false;
 }

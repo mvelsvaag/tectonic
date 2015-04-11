@@ -1,5 +1,5 @@
 var daGui;
-var plateFolder
+var plateGUI;
 
 var generateParams = {
 	depth: 0,
@@ -16,15 +16,22 @@ var generateParams = {
 	faceMeshOpacity: 1.0,
 	faceMeshTransparent : false,
 	faceMeshEnabled : false,
-	plateCount: 1,
+	plateCount: 0,
 	generate: function() {
+		createPlates();
+	}
+}
+
+function refresh() {
+	isCalculating=true;
 		if(depthVectors) {
 			removePointCloud(depthVectors);
 			depthVector = null;
 		}
-		isCalculating=true;
 		nScale = generateParams.scale;
 		radius = generateParams.radius;
+		
+		isCalculating=true;
 		initVData();
 		initSphereTemplate();
 		generatePoints(Number.parseInt(generateParams.depth), radius);
@@ -32,21 +39,41 @@ var generateParams = {
 		if(generateParams.faceMeshEnabled){
 			initFaces();
 		}
+		animate();	
+}
 
-		generatePlates(generateParams.plateCount);
-		document.getElementById("status").innerHTML = "depthVectors generated";
-		document.getElementById("status").className = "ok";
-		animate();
-	},
-	generatePlates: function() {
-		if(plates){
-			isCalculating=true;
-			generatePlates(generateParams.plateCount);
-			animate();
-		}else {
-			document.getElementById("status").innerHTML = "0 depthVectors. generate first";
-			document.getElementById("status").className = "bad";
+function createPlates() {
+	plates = new Array();
+	for(i=0;i<generateParams.plateCount;i++) {
+		//create plate
+		var plate = new Object();
+		plate.vectors = new Array();
+		plate.color = new THREE.Color(Math.random(),Math.random(),Math.random()).getHex();
+		plate.pointSize = 3;
+		plates.push(plate);
+	}
+	updateColorFolder();
+}
+
+function updateColorFolder() {
+	var p = {
+		seedPlates: function () {
+			for(i in plates) {
+				if(seedPlate(i)) {
+					updateSpherePointCloud(plates[i].vectors,plates[i].color,plates[i].pointSize);
+					animate();
+				}
+			}
 		}
+	};
+	if(plateGUI) {
+		plateGUI.destroy();
+	}
+	plateGUI = new dat.GUI();
+	plateGUI.add(p, "seedPlates");
+	for(i in plates) { //for each plate
+		var colorController = plateGUI.addColor(plates[i], 'color');
+		var sizeController = plateGUI.add(plates[i], 'pointSize',1,5).step(1);
 	}
 }
 
@@ -56,8 +83,6 @@ function initGUI() {
 	var depthController = daGui.add(generateParams, "depth",0,5).step(1);
 	var scaleController = daGui.add(generateParams, "scale",1,5).step(1);
 	var faceController = daGui.add(generateParams, 'faceMeshEnabled');
-	var plateCountController = daGui.add(generateParams, "plateCount",1,5).step(1);
-	daGui.add(generateParams, "generate");
 	var sphereFolder = daGui.addFolder('sphere settings');
 	var sphereColorController = sphereFolder.addColor(generateParams, 'sphereColor');
 	var sphereOpacityController = sphereFolder.add(generateParams, "sphereOpacity",0,1);
@@ -69,68 +94,67 @@ function initGUI() {
 	
 	var faceMeshFolder = daGui.addFolder('faceMesh settings');
 	var faceMeshColorController = faceMeshFolder.addColor(generateParams, 'faceMeshColor');
-	
-	//daGui.add(generateParams, "faceMeshOpacity",0,1);
-	//daGui.add(generateParams, "faceMeshTransparent");
-	
-	//daGui.add(generateParams, "generatePlates");
+	daGui.add(generateParams, "generate");
+	var plateCountController = daGui.add(generateParams, "plateCount",0,5).step(1);
 	
 	/*
 	* gui callbacks
 	* holy callbacks batman
 	*/
 	depthController.onChange(function(value) {
-		generateParams.generate();
+		refresh();
 	});
-	
+
 	sphereColorController.onChange(function(value) {
-		generateParams.generate();
-	});
-	
+		initSphereTemplate();
+	});	
 	sphereOpacityController.onChange(function(value) {
-		generateParams.generate();
+		initSphereTemplate();
+		animate();
 	});
-	
 	sphereTransparentController.onChange(function(value) {
-		generateParams.generate();
+		initSphereTemplate();
+		animate();
 	});
 	
 	scaleController.onChange(function(value) {
-		generateParams.generate();
+		refresh();
 	});
 	
 	depthColorController.onChange(function(value) {
-		generateParams.generate();
+		updateSpherePointCloud(depthVectors,generateParams.depthVertexColor,generateParams.depthVertexSize);
 	});
-	
-	
 	depthSizeController.onChange(function(value) {
-		generateParams.generate();
+		updateSpherePointCloud(depthVectors,generateParams.depthVertexColor,generateParams.depthVertexSize);
 	});
 	
 	faceMeshColorController.onChange(function(value) {
-		if(generateParams.faceMeshEnabled){
-			initFaces();
-			animate();
-			//console("");
+		if(!depthFaces) {
+			refresh();
 		}else {
-			//console("remove");
-			scene.remove(depthFaces);
-			animate();
+			initFaces();
+			if(!generateParams.faceMeshEnabled){
+				document.getElementById("faces").innerHTML = 0;
+				scene.remove(depthFaces);
+				animate();
+			}
 		}
 	});
 	
 	faceController.onChange(function(value) {
-		generateParams.generate();
-		if(!generateParams.faceMeshEnabled){
-			scene.remove(depthFaces);
-			animate();
+		if(!depthFaces) {
+			refresh();
+		}else {
+			initFaces();
+			if(!generateParams.faceMeshEnabled){
+				document.getElementById("faces").innerHTML = 0;
+				scene.remove(depthFaces);
+				animate();
+			}
 		}
 	});
 	
 	plateCountController.onChange(function(value) {
-		generateParams.generate();
-		generateParams.generatePlates();
-		animate();
+		createPlates();
 	});
 }

@@ -112,34 +112,15 @@
 		});
 		sphere = new THREE.Mesh( geometry, material );
 		sphere.scale.set(nScale,nScale,nScale);
-		scene.add( sphere );
+		scene.add(sphere);
 	}
 	
 	
 	/*
 	*	point clouds
 	*/
-	/*
-	function initPointCloud(vectors,color) {
-		if(pointCloud!=null) {
-			scene.remove( pointCloud );
-		}
-		var geometry = new THREE.Geometry();
-		for(i in vectors) {
-			geometry.vertices.push(vectors[i]);
-		}
-		var pMaterial = new THREE.PointCloudMaterial({
-                    color: generateParams.basePointsColor,
-                    size: 1,
-                    sizeAttenuation : false
-		});
-		pointCloud = new THREE.PointCloud(geometry,pMaterial);
-		pointCloud.scale.set(nScale,nScale,nScale);
-		scene.add( pointCloud );
-	}
-	*/
-	
 	function updateSpherePointCloud(vectors,color,size) {
+		console.log(color);
 		if(vectors.pointCloud !=null) {
 			scene.remove( vectors.pointCloud  ); //remove the old cloud
 		}
@@ -216,6 +197,7 @@
 	document.addEventListener("DOMContentLoaded", function(event) {
 	
 		init();
+		refresh();
 		animate();
 		
 	});
