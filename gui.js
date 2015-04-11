@@ -152,13 +152,13 @@ function initGUI() {
 		updateSphereTemplate();
 	});
 	sphereColorController.onChange(function(value) {
-		initSphereTemplate();
+		updateSphereTemplate();
 	});
 	sphereOpacityController.onChange(function(value) {
-		initSphereTemplate();
+		updateSphereTemplate();
 	});
 	sphereTransparentController.onChange(function(value) {
-		initSphereTemplate();
+		updateSphereTemplate();
 	});
 	depthColorController.onChange(function(value) {
 		updateSpherePointCloud(depthVectors, generateParams.depthVertexColor, generateParams.depthVertexSize);
